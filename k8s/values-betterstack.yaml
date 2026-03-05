@@ -79,6 +79,10 @@ components:
 
   # Frontend (Next.js) — Sentry DSN + JS tag injected via secret
   frontend:
+    imageOverride:
+      repository: "476114145753.dkr.ecr.us-east-2.amazonaws.com/otel-demo-frontend"
+      tag: "latest"
+      pullPolicy: Always
     env:
       - name: FRONTEND_PORT
         value: "8080"
