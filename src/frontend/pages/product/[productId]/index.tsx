@@ -22,6 +22,7 @@ import * as S from '../../../styles/ProductDetail.styled';
 import { useCurrency } from '../../../providers/Currency.provider';
 import ProductReviewProvider from '../../../providers/ProductReview.provider';
 import ProductAIAssistantProvider from '../../../providers/ProductAIAssistant.provider';
+import Analytics from '../../../utils/analytics';
 
 const quantityOptions = new Array(10).fill(0).map((_, i) => i + 1);
 
@@ -54,13 +55,19 @@ const ProductDetail: NextPage = () => {
     }
   ) as { data: Product };
 
+  // Track product viewed when we have the product data
+  useEffect(() => {
+    if (name && productId) {
+      Analytics.productViewed(productId, name, priceUsd);
+      Analytics.pageViewed(`Product: ${name}`);
+    }
+  }, [productId, name, priceUsd]);
+
   const onAddItem = useCallback(async () => {
-    await addItem({
-      productId,
-      quantity,
-    });
+    Analytics.addedToCart(productId, name, quantity, priceUsd);
+    await addItem({ productId, quantity });
     push('/cart');
-  }, [addItem, productId, quantity, push]);
+  }, [addItem, productId, quantity, push, name, priceUsd]);
 
   return (
     <AdProvider
@@ -68,7 +75,7 @@ const ProductDetail: NextPage = () => {
       contextKeys={[...new Set(categories)]}
     >
       <Head>
-        <title>Otel Demo - Product</title>
+        <title>{name ? `${name} — Better Stack Store` : 'Better Stack Store'}</title>
       </Head>
       <Layout>
         <S.ProductDetail data-cy={CypressFields.ProductDetail}>
@@ -76,10 +83,12 @@ const ProductDetail: NextPage = () => {
             <S.Image $src={"/images/products/" + picture} data-cy={CypressFields.ProductPicture} />
             <S.Details>
               <S.Name data-cy={CypressFields.ProductName}>{name}</S.Name>
-              <S.Description data-cy={CypressFields.ProductDescription}>{description}</S.Description>
               <S.ProductPrice>
                 <ProductPrice price={priceUsd} />
               </S.ProductPrice>
+              <S.Divider />
+              <S.Description data-cy={CypressFields.ProductDescription}>{description}</S.Description>
+              <S.Divider />
               <S.Text>Quantity</S.Text>
               <Select
                 data-cy={CypressFields.ProductQuantity}
@@ -98,11 +107,11 @@ const ProductDetail: NextPage = () => {
             </S.Details>
           </S.Container>
           {productId && (
-              <ProductAIAssistantProvider productId={productId}>
-                <ProductReviewProvider productId={productId}>
-                  <ProductReviews />
-                </ProductReviewProvider>
-              </ProductAIAssistantProvider>
+            <ProductAIAssistantProvider productId={productId}>
+              <ProductReviewProvider productId={productId}>
+                <ProductReviews />
+              </ProductReviewProvider>
+            </ProductAIAssistantProvider>
           )}
           <Recommendations />
         </S.ProductDetail>

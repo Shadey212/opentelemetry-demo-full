@@ -7,6 +7,7 @@ import ApiGateway from '../gateways/Api.gateway';
 import { CartItem, OrderResult, PlaceOrderRequest } from '../protos/demo';
 import { IProductCart } from '../types/Cart';
 import { useCurrency } from './Currency.provider';
+import Analytics from '../utils/analytics';
 
 interface IContext {
   cart: IProductCart;
@@ -63,10 +64,23 @@ const CartProvider = ({ children }: IProps) => {
     (item: CartItem) => addCartMutation.mutateAsync({ ...item, currencyCode: selectedCurrency }),
     [addCartMutation, selectedCurrency]
   );
-  const emptyCart = useCallback(() => emptyCartMutation.mutateAsync(), [emptyCartMutation]);
+
+  const emptyCart = useCallback(() => {
+    Analytics.cartEmptied();
+    return emptyCartMutation.mutateAsync();
+  }, [emptyCartMutation]);
+
   const placeOrder = useCallback(
-    (order: PlaceOrderRequest) => placeOrderMutation.mutateAsync({ ...order, currencyCode: selectedCurrency }),
-    [placeOrderMutation, selectedCurrency]
+    (order: PlaceOrderRequest) => {
+      Analytics.checkoutStarted(cart.items.length);
+      return placeOrderMutation.mutateAsync({ ...order, currencyCode: selectedCurrency }).then(result => {
+        if (result?.orderId) {
+          Analytics.orderPlaced(result.orderId);
+        }
+        return result;
+      });
+    },
+    [placeOrderMutation, selectedCurrency, cart.items.length]
   );
 
   const value = useMemo(() => ({ cart, addItem, emptyCart, placeOrder }), [cart, addItem, emptyCart, placeOrder]);

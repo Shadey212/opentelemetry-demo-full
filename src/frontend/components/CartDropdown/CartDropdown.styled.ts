@@ -25,9 +25,11 @@ export const CartDropdown = styled.div`
   ${({ theme }) => theme.breakpoints.desktop} {
     position: absolute;
     width: 400px;
-    top: 95px;
-    right: 17px;
+    top: 72px;
+    right: 12px;
     max-height: 600px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(15,23,42,0.16), 0 2px 8px rgba(15,23,42,0.08);
   }
 `;
 

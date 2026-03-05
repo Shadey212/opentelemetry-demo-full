@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kaniko-builder
+  namespace: otel-demo
+  annotations:
+    # IAM role for ECR push — attached via AWS IAM below
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-source
+  namespace: otel-demo
+# Source is provided via a git-sync init container — see Job below
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: build-frontend
+  namespace: otel-demo
+spec:
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      serviceAccountName: kaniko-builder
+      restartPolicy: Never
+      initContainers:
+        - name: git-clone
+          image: alpine/git:latest
+          command:
+            - git
+            - clone
+            - --depth=1
+            - https://github.com/BetterStackHQ/opentelemetry-demo-full.git
+            - /workspace
+          volumeMounts:
+            - name: workspace
+              mountPath: /workspace
+      containers:
+        - name: kaniko
+          image: gcr.io/kaniko-project/executor:latest
+          args:
+            - --context=/workspace
+            - --dockerfile=/workspace/src/frontend/Dockerfile
+            - --destination=476114145753.dkr.ecr.us-east-2.amazonaws.com/otel-demo-frontend:latest
+            - --destination=476114145753.dkr.ecr.us-east-2.amazonaws.com/otel-demo-frontend:2.2.0
+            - --cache=true
+          volumeMounts:
+            - name: workspace
+              mountPath: /workspace
+            - name: docker-config
+              mountPath: /kaniko/.docker
+      volumes:
+        - name: workspace
+          emptyDir: {}
+        - name: docker-config
+          secret:
+            secretName: ecr-docker-config

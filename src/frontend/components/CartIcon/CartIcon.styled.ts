@@ -6,20 +6,30 @@ import styled from 'styled-components';
 
 export const CartIcon = styled.a`
   position: relative;
-  display: block;
-  margin-left: 25px;
   display: flex;
   flex-flow: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  transition: background 150ms ease, border-color 150ms ease;
+  margin-left: 8px;
+
+  &:hover {
+    background: rgba(255,255,255,0.15);
+    border-color: rgba(255,255,255,0.2);
+  }
 `;
 
 export const Icon = styled(Image).attrs({
-  width: '24',
-  height: '24',
+  width: '18',
+  height: '18',
 })`
-  margin-bottom: 3px;
+  filter: invert(1) opacity(0.85);
 `;
 
 export const ItemsCount = styled.span`
@@ -27,13 +37,14 @@ export const ItemsCount = styled.span`
   align-items: center;
   justify-content: center;
   position: absolute;
-  top: 9px;
-  left: 15px;
-  width: 15px;
-  height: 15px;
-  font-size: ${({ theme }) => theme.sizes.nano};
-  border-radius: 50%;
-  border: 1px solid ${({ theme }) => theme.colors.white};
+  top: -6px;
+  right: -6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 9px;
   color: ${({ theme }) => theme.colors.white};
-  background: ${({ theme }) => theme.colors.otelRed};
+  background: ${({ theme }) => theme.colors.otelBlue};
 `;

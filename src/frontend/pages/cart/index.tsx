@@ -10,11 +10,18 @@ import CartDetail from '../../components/Cart/CartDetail';
 import EmptyCart from '../../components/Cart/EmptyCart';
 import { useCart } from '../../providers/Cart.provider';
 import AdProvider from '../../providers/Ad.provider';
+import { useEffect } from 'react';
+import Analytics from '../../utils/analytics';
 
 const Cart: NextPage = () => {
   const {
     cart: { items },
   } = useCart();
+
+  useEffect(() => {
+    Analytics.cartViewed(items.length);
+    Analytics.pageViewed('Cart');
+  }, [items.length]);
 
   return (
     <AdProvider
@@ -22,7 +29,7 @@ const Cart: NextPage = () => {
       contextKeys={[...new Set(items.flatMap(({ product }) => product.categories))]}
     >
       <Head>
-        <title>Otel Demo - Cart</title>
+        <title>Better Stack Store — Cart</title>
       </Head>
       <Layout>
         <S.Cart>

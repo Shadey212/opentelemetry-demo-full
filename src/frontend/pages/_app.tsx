@@ -10,6 +10,7 @@ import { ThemeProvider } from 'styled-components';
 import Theme from '../styles/Theme';
 import FrontendTracer from '../utils/telemetry/FrontendTracer';
 import SessionGateway from '../gateways/Session.gateway';
+import Analytics from '../utils/analytics';
 import { OpenFeatureProvider, OpenFeature } from '@openfeature/react-sdk';
 import { FlagdWebProvider } from '@openfeature/flagd-web-provider';
 
@@ -28,6 +29,7 @@ if (typeof window !== 'undefined') {
   FrontendTracer();
   if (window.location) {
     const session = SessionGateway.getSession();
+    Analytics.setUser(session.userId);
 
     // Set context prior to provider init to avoid multiple http calls
     OpenFeature.setContext({ targetingKey: session.userId, ...session }).then(() => {

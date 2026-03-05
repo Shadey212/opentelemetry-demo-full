@@ -11,6 +11,8 @@ import ApiGateway from '../gateways/Api.gateway';
 import Banner from '../components/Banner';
 import { CypressFields } from '../utils/enums/CypressFields';
 import { useCurrency } from '../providers/Currency.provider';
+import { useEffect } from 'react';
+import Analytics from '../utils/analytics';
 
 const Home: NextPage = () => {
   const { selectedCurrency } = useCurrency();
@@ -19,10 +21,14 @@ const Home: NextPage = () => {
     queryFn: () => ApiGateway.listProducts(selectedCurrency),
   });
 
+  useEffect(() => {
+    Analytics.pageViewed('Home');
+  }, []);
+
   return (
     <Layout>
       <Head>
-        <title>Otel Demo - Home</title>
+        <title>Better Stack Store</title>
       </Head>
       <S.Home data-cy={CypressFields.HomePage}>
         <Banner />
@@ -30,9 +36,17 @@ const Home: NextPage = () => {
           <S.Row>
             <S.Content>
               <S.HotProducts>
-                <S.HotProductsTitle data-cy={CypressFields.HotProducts} id="hot-products">
-                  Hot Products
-                </S.HotProductsTitle>
+                <S.SectionHeader>
+                  <S.HotProductsTitle
+                    data-cy={CypressFields.HotProducts}
+                    id="hot-products"
+                  >
+                    Featured Products
+                  </S.HotProductsTitle>
+                  {productList.length > 0 && (
+                    <S.ProductCount>{productList.length} items</S.ProductCount>
+                  )}
+                </S.SectionHeader>
                 <ProductList productList={productList} />
               </S.HotProducts>
             </S.Content>

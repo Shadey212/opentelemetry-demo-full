@@ -1,0 +1,85 @@
+# Playwright-based realistic traffic generator for Better Stack Store.
+#
+# This deployment runs real Chromium browser sessions against the frontend so
+# the Better Stack JS tag fires normally, producing:
+#   - Session replays
+#   - Web vitals (LCP, FID, CLS, TTFB)
+#   - RUM page-view / interaction events
+#   - Sentry performance traces (via the Sentry SDK in the frontend)
+#
+# Build & push the image once (from repo root):
+#
+#   aws ecr create-repository --repository-name otel-demo-traffic-generator --region us-east-2
+#
+#   docker build -t 476114145753.dkr.ecr.us-east-2.amazonaws.com/otel-demo-traffic-generator:latest \
+#     src/traffic-generator/
+#   docker push 476114145753.dkr.ecr.us-east-2.amazonaws.com/otel-demo-traffic-generator:latest
+#
+# Then apply:
+#   kubectl apply -f k8s/traffic-generator-deployment.yaml -n otel-demo
+#
+# Tune concurrency / think-time via the env vars below.
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: playwright-traffic-generator
+  namespace: otel-demo
+  labels:
+    app: playwright-traffic-generator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: playwright-traffic-generator
+  template:
+    metadata:
+      labels:
+        app: playwright-traffic-generator
+    spec:
+      # Playwright needs a shared-memory area bigger than the 64 MB default
+      volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 512Mi
+
+      containers:
+        - name: traffic-generator
+          image: 476114145753.dkr.ecr.us-east-2.amazonaws.com/otel-demo-traffic-generator:latest
+          imagePullPolicy: Always
+
+          command: ["node", "script.js"]
+
+          volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
+
+          env:
+            # Point at the in-cluster service so we get real DNS / K8s routing
+            - name: FRONTEND_URL
+              value: "http://frontend-proxy"
+
+            # How many parallel virtual users to run
+            - name: CONCURRENCY
+              value: "4"
+
+            # Think-time range between actions (milliseconds)
+            - name: THINK_MIN
+              value: "800"
+            - name: THINK_MAX
+              value: "5000"
+
+            # Pause between sessions for each worker
+            - name: SESSION_PAUSE_MIN
+              value: "3000"
+            - name: SESSION_PAUSE_MAX
+              value: "12000"
+
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+            limits:
+              cpu: "2"
+              memory: "2Gi"

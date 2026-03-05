@@ -1,0 +1,124 @@
+# Better Stack Helm values override for opentelemetry-demo
+# Replaces Jaeger/Prometheus/Grafana/OpenSearch with Better Stack Collector
+
+# ──────────────────────────────────────────────
+# Disable local observability backends
+# ──────────────────────────────────────────────
+grafana:
+  enabled: false
+
+jaeger:
+  enabled: false
+
+prometheus:
+  enabled: false
+
+opensearch:
+  enabled: false
+
+# ──────────────────────────────────────────────
+# Global env additions for all services
+# ──────────────────────────────────────────────
+default:
+  envOverrides:
+    - name: APP_VERSION
+      value: "2.2.0"
+
+# ──────────────────────────────────────────────
+# OTel Collector — forward to Better Stack Collector
+# Better Stack Collector (eBPF DaemonSet) runs in the same namespace
+# and accepts OTLP on 4317 (gRPC), forwarding to Better Stack automatically.
+# We only override exporters + pipelines; all receivers/processors come from
+# the chart's preset defaults (hostMetrics, kubernetesAttributes, etc.)
+# ──────────────────────────────────────────────
+opentelemetry-collector:
+  # Inject node hostIP so each DaemonSet pod sends to the Better Stack Collector on the same node
+  extraEnvs:
+    - name: BS_COLLECTOR_HOST
+      valueFrom:
+        fieldRef:
+          fieldPath: status.hostIP
+  config:
+    exporters:
+      otlphttp/betterstack-collector:
+        endpoint: "http://${env:BS_COLLECTOR_HOST}:34320"
+        tls:
+          insecure: true
+      debug: {}
+
+    service:
+      pipelines:
+        traces:
+          processors: [memory_limiter, resourcedetection, resource, transform, batch]
+          exporters: [otlphttp/betterstack-collector, debug, spanmetrics]
+        metrics:
+          receivers: [otlp, spanmetrics]
+          processors: [memory_limiter, resourcedetection, resource, batch]
+          exporters: [otlphttp/betterstack-collector, debug]
+        logs:
+          processors: [memory_limiter, resourcedetection, resource, batch]
+          exporters: [otlphttp/betterstack-collector, debug]
+
+# ──────────────────────────────────────────────
+# Components
+# ──────────────────────────────────────────────
+components:
+  # Expose frontend via LoadBalancer on port 80 (Cloudflare proxied → aws-collector.betterstack.dev)
+  frontend-proxy:
+    service:
+      type: LoadBalancer
+      port: 80
+    additionalVolumeMounts:
+      - name: envoy-cors-template
+        mountPath: /home/envoy/envoy.tmpl.yaml
+        subPath: envoy.tmpl.yaml
+    additionalVolumes:
+      - name: envoy-cors-template
+        configMap:
+          name: envoy-cors-template
+
+  # Frontend (Next.js) — Sentry DSN + JS tag injected via secret
+  frontend:
+    env:
+      - name: FRONTEND_PORT
+        value: "8080"
+      - name: PORT
+        value: $(FRONTEND_PORT)
+      - name: FRONTEND_ADDR
+        value: :8080
+      - name: AD_ADDR
+        value: ad:8080
+      - name: CART_ADDR
+        value: cart:8080
+      - name: CHECKOUT_ADDR
+        value: checkout:8080
+      - name: CURRENCY_ADDR
+        value: currency:8080
+      - name: PRODUCT_CATALOG_ADDR
+        value: product-catalog:8080
+      - name: PRODUCT_REVIEWS_ADDR
+        value: product-reviews:3551
+      - name: RECOMMENDATION_ADDR
+        value: recommendation:8080
+      - name: SHIPPING_ADDR
+        value: http://shipping:8080
+      - name: FLAGD_HOST
+        value: flagd
+      - name: FLAGD_PORT
+        value: "8013"
+      - name: ENV_PLATFORM
+        value: kubernetes
+      - name: APP_VERSION
+        value: "2.2.0"
+      - name: SENTRY_DSN
+        valueFrom:
+          secretKeyRef:
+            name: betterstack-tokens
+            key: SENTRY_DSN_FRONTEND
+            optional: true
+      - name: BETTERSTACK_JS_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: betterstack-tokens
+            key: BETTERSTACK_JS_TOKEN
+            optional: true

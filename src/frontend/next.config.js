@@ -6,6 +6,7 @@
 const dotEnv = require('dotenv');
 const dotenvExpand = require('dotenv-expand');
 const { resolve } = require('path');
+const { withSentryConfig } = require('@sentry/nextjs');
 
 const myEnv = dotEnv.config({
   path: resolve(__dirname, '../../.env'),
@@ -25,6 +26,7 @@ const {
   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = '',
   OTEL_SERVICE_NAME = 'frontend',
   PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = '',
+  APP_VERSION = '2.2.0',
 } = process.env;
 
 const nextConfig = {
@@ -64,6 +66,8 @@ const nextConfig = {
     NEXT_PUBLIC_PLATFORM: ENV_PLATFORM,
     NEXT_PUBLIC_OTEL_SERVICE_NAME: OTEL_SERVICE_NAME,
     NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT,
+    NEXT_PUBLIC_APP_VERSION: APP_VERSION,
+    // NEXT_PUBLIC_SENTRY_DSN is read at runtime from window.ENV or process.env
   },
   images: {
     loader: "custom",
@@ -71,4 +75,9 @@ const nextConfig = {
   }
 };
 
-module.exports = nextConfig;
+module.exports = withSentryConfig(nextConfig, {
+  silent: true,
+  // No source map upload needed — no Sentry org configured
+  disableServerWebpackPlugin: true,
+  disableClientWebpackPlugin: true,
+});

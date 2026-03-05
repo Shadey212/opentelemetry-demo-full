@@ -5,16 +5,16 @@ import { DefaultTheme } from 'styled-components';
 
 const Theme: DefaultTheme = {
   colors: {
-    otelBlue: '#5262A8',
-    otelYellow: '#EAAA3B',
-    otelGray: '#403F4B',
-    otelRed: '#FB7181',
-    backgroundGray: 'rgba(64, 63, 75, 0.1)',
-    lightBorderGray: 'rgba(82, 98, 168, 0.3)',
-    borderGray: '#2E2437',
-    textGray: '#29293E',
-    textLightGray: '#78788C',
-    white: '#FFFFFF',
+    otelBlue: '#f97316',                  // Orange — primary CTA / button
+    otelYellow: '#fbbf24',                // Amber — badge / highlight
+    otelGray: '#0f172a',                  // Slate-900 — header / footer bg
+    otelRed: '#ef4444',                   // Red — errors
+    backgroundGray: '#f8fafc',            // Slate-50 — page background
+    lightBorderGray: 'rgba(15,23,42,0.1)',// Light dividers
+    borderGray: '#e2e8f0',               // Slate-200 — card borders
+    textGray: '#0f172a',                  // Slate-900 — primary text
+    textLightGray: '#64748b',             // Slate-500 — muted text
+    white: '#ffffff',
   },
   breakpoints: {
     desktop: '@media (min-width: 768px)',
@@ -24,7 +24,7 @@ const Theme: DefaultTheme = {
     mLarge: '20px',
     mMedium: '14px',
     mSmall: '12px',
-    dxLarge: '58px',
+    dxLarge: '56px',
     dLarge: '40px',
     dMedium: '18px',
     dSmall: '16px',
