@@ -22,7 +22,7 @@ opensearch:
 default:
   envOverrides:
     - name: APP_VERSION
-      value: "2.3.1"
+      value: "2.3.2"
 
 # ──────────────────────────────────────────────
 # OTel Collector — forward to Better Stack Collector
@@ -109,7 +109,7 @@ components:
       - name: ENV_PLATFORM
         value: kubernetes
       - name: APP_VERSION
-        value: "2.3.1"
+        value: "2.3.2"
       - name: SENTRY_DSN
         valueFrom:
           secretKeyRef:
