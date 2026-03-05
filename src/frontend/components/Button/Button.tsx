@@ -5,38 +5,41 @@ import styled, { css } from 'styled-components';
 
 const Button = styled.button<{ $type?: 'primary' | 'secondary' | 'link' }>`
   background-color: ${({ theme }) => theme.colors.otelBlue};
-  color: white;
+  color: #ffffff;
   display: inline-block;
   border: solid 1px ${({ theme }) => theme.colors.otelBlue};
   padding: 8px 20px;
   outline: none;
-  font-weight: 600;
-  font-size: 15px;
+  font-weight: 700;
+  font-size: 14px;
   line-height: 1.4;
-  border-radius: 10px;
-  height: 48px;
+  border-radius: 7px;
+  height: 40px;
   cursor: pointer;
-  transition: background 150ms ease, border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+  transition: background 150ms ease, border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease, color 150ms ease;
 
   &:hover {
-    background: #ea6c0a;
-    border-color: #ea6c0a;
+    background: #4449A9;
+    border-color: #4449A9;
+    color: white;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(249,115,22,0.3);
+    box-shadow: 0 4px 14px rgba(91,99,211,0.35);
   }
 
   ${({ $type = 'primary' }) =>
     $type === 'secondary' &&
     css`
-      background: none;
-      color: ${({ theme }) => theme.colors.otelBlue};
+      background: transparent;
+      color: ${({ theme }) => theme.colors.textGray};
       border-color: ${({ theme }) => theme.colors.borderGray};
+      font-weight: 600;
 
       &:hover {
         background: ${({ theme }) => theme.colors.backgroundGray};
-        border-color: ${({ theme }) => theme.colors.otelBlue};
+        border-color: #d1d5db;
         box-shadow: none;
-        color: ${({ theme }) => theme.colors.otelBlue};
+        transform: none;
+        color: ${({ theme }) => theme.colors.textGray};
       }
     `};
 
@@ -49,12 +52,14 @@ const Button = styled.button<{ $type?: 'primary' | 'secondary' | 'link' }>`
       box-shadow: none;
       transform: none;
       padding: 8px 0;
+      height: auto;
+      font-weight: 600;
 
       &:hover {
         background: none;
         box-shadow: none;
         transform: none;
-        opacity: 0.8;
+        color: #4449A9;
       }
     `};
 `;

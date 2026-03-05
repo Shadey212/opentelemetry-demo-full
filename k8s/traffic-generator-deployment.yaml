@@ -58,7 +58,7 @@ spec:
           env:
             # Point at the in-cluster service so we get real DNS / K8s routing
             - name: FRONTEND_URL
-              value: "http://frontend-proxy"
+              value: "https://aws-collector.betterstack.dev"
 
             # How many parallel virtual users to run
             - name: CONCURRENCY

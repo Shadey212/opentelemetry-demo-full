@@ -11,10 +11,10 @@ const Header = () => {
       <S.NavBar>
         <S.Container>
           <S.NavBarBrand href="/">
-            <S.BrandLogoIcon>BS</S.BrandLogoIcon>
+            <S.BrandLogoIcon />
             <S.BrandText>
               <S.BrandName>Better Stack</S.BrandName>
-              <S.BrandTagline>Store</S.BrandTagline>
+              <S.BrandTagline>/ Store</S.BrandTagline>
             </S.BrandText>
           </S.NavBarBrand>
           <S.Controls>

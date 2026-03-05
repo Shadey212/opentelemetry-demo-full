@@ -7,21 +7,18 @@ import * as S from './Banner.styled';
 const Banner = () => {
   return (
     <S.Banner>
-      <S.ImageContainer>
-        <S.BannerImg />
-      </S.ImageContainer>
       <S.TextContainer>
-        <S.EyebrowLabel>Better Stack Store</S.EyebrowLabel>
+        <S.EyebrowLabel>New arrivals every week</S.EyebrowLabel>
         <S.Title>
-          Explore the universe,{' '}
-          <S.TitleAccent>closer than ever</S.TitleAccent>
+          The universe,{' '}
+          <S.TitleAccent>within reach.</S.TitleAccent>
         </S.Title>
         <S.Subtitle>
-          Premium telescopes, eyepieces, and astronomy accessories — curated for
-          enthusiasts and professionals alike.
+          Premium telescopes and astronomy gear — curated for stargazers,
+          astrophotographers, and professionals. Free shipping over $100.
         </S.Subtitle>
         <Link href="#hot-products">
-          <S.GoShoppingButton>Shop now</S.GoShoppingButton>
+          <S.GoShoppingButton>Browse the collection</S.GoShoppingButton>
         </Link>
       </S.TextContainer>
     </S.Banner>

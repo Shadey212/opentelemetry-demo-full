@@ -5,15 +5,15 @@ import { DefaultTheme } from 'styled-components';
 
 const Theme: DefaultTheme = {
   colors: {
-    otelBlue: '#f97316',                  // Orange — primary CTA / button
-    otelYellow: '#fbbf24',                // Amber — badge / highlight
-    otelGray: '#0f172a',                  // Slate-900 — header / footer bg
+    otelBlue: '#5B63D3',                  // Better Stack indigo — primary CTA
+    otelYellow: '#7C87F7',                // Indigo-light — highlight
+    otelGray: '#0a0a0a',                  // Near-black — hero / footer bg
     otelRed: '#ef4444',                   // Red — errors
-    backgroundGray: '#f8fafc',            // Slate-50 — page background
-    lightBorderGray: 'rgba(15,23,42,0.1)',// Light dividers
-    borderGray: '#e2e8f0',               // Slate-200 — card borders
-    textGray: '#0f172a',                  // Slate-900 — primary text
-    textLightGray: '#64748b',             // Slate-500 — muted text
+    backgroundGray: '#f9fafb',            // Gray-50 — page background
+    lightBorderGray: 'rgba(0,0,0,0.06)', // Light dividers
+    borderGray: '#e5e7eb',               // Gray-200 — card borders
+    textGray: '#111827',                  // Gray-900 — primary text
+    textLightGray: '#6b7280',             // Gray-500 — muted text
     white: '#ffffff',
   },
   breakpoints: {

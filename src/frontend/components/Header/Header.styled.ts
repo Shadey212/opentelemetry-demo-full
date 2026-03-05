@@ -5,20 +5,20 @@ import Link from 'next/link';
 import styled from 'styled-components';
 
 export const Header = styled.header`
-  background-color: ${({ theme }) => theme.colors.otelGray};
-  color: white;
+  background-color: #ffffff;
+  color: ${({ theme }) => theme.colors.textGray};
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 1px 0 rgba(255,255,255,0.06);
+  border-bottom: 1px solid ${({ theme }) => theme.colors.borderGray};
 `;
 
 export const NavBar = styled.nav`
-  height: 64px;
+  height: 60px;
   font-size: 15px;
 
   ${({ theme }) => theme.breakpoints.desktop} {
-    height: 72px;
+    height: 64px;
   }
 `;
 
@@ -29,6 +29,8 @@ export const Container = styled.div`
   width: 100%;
   height: 100%;
   padding: 0 20px;
+  max-width: 1280px;
+  margin: 0 auto;
 
   ${({ theme }) => theme.breakpoints.desktop} {
     padding: 0 48px;
@@ -43,44 +45,63 @@ export const NavBarBrand = styled(Link)`
 `;
 
 export const BrandLogoIcon = styled.div`
-  width: 32px;
-  height: 32px;
-  background: ${({ theme }) => theme.colors.otelBlue};
-  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+  background: ${({ theme }) => theme.colors.otelGray};
+  border-radius: 7px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
-  font-weight: 800;
-  color: white;
-  letter-spacing: -0.5px;
   flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: ${({ theme }) => theme.colors.otelBlue};
+    border-radius: 3px;
+    top: 4px;
+    left: 4px;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #ffffff;
+    border-radius: 2px;
+    bottom: 4px;
+    right: 4px;
+  }
 `;
 
 export const BrandText = styled.div`
   display: flex;
-  flex-direction: column;
-  line-height: 1.1;
+  align-items: baseline;
+  gap: 5px;
+  line-height: 1;
 `;
 
 export const BrandName = styled.span`
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
-  color: #ffffff;
+  color: ${({ theme }) => theme.colors.textGray};
   letter-spacing: -0.3px;
 `;
 
 export const BrandTagline = styled.span`
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 500;
-  color: ${({ theme }) => theme.colors.otelBlue};
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+  color: ${({ theme }) => theme.colors.textLightGray};
 `;
 
 export const Controls = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  height: 44px;
+  height: 40px;
 `;

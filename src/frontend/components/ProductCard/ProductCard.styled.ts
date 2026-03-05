@@ -12,38 +12,40 @@ export const Link = styled(RouterLink)`
 export const ProductCard = styled.div`
   background: #ffffff;
   border: 1px solid ${({ theme }) => theme.colors.borderGray};
-  border-radius: 14px;
+  border-radius: 10px;
   overflow: hidden;
   cursor: pointer;
   transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
   position: relative;
+  display: flex;
+  flex-direction: column;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(15,23,42,0.12);
-    border-color: #cbd5e1;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+    border-color: #d1d5db;
   }
 `;
 
 export const ImageWrapper = styled.div`
   position: relative;
-  background: #f1f5f9;
+  background: ${({ theme }) => theme.colors.backgroundGray};
   overflow: hidden;
 `;
 
 export const Image = styled.div<{ $src: string }>`
   width: 100%;
-  height: 180px;
+  height: 192px;
   background: ${({ $src }) => $src ? `url("${$src}")` : 'transparent'} no-repeat center;
   background-size: contain;
   transition: transform 300ms ease;
 
   ${ProductCard}:hover & {
-    transform: scale(1.04);
+    transform: scale(1.03);
   }
 
   ${({ theme }) => theme.breakpoints.desktop} {
-    height: 220px;
+    height: 208px;
   }
 `;
 
@@ -52,10 +54,9 @@ export const QuickAddOverlay = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 12px;
-  background: linear-gradient(to top, rgba(15,23,42,0.85) 0%, transparent 100%);
+  padding: 10px;
   transform: translateY(100%);
-  transition: transform 200ms ease;
+  transition: transform 180ms ease;
   display: flex;
   justify-content: center;
 
@@ -66,47 +67,46 @@ export const QuickAddOverlay = styled.div`
 
 export const QuickAddButton = styled.button`
   background: ${({ theme }) => theme.colors.otelBlue};
-  color: white;
+  color: #ffffff;
   border: none;
-  border-radius: 8px;
-  padding: 8px 20px;
+  border-radius: 6px;
+  padding: 9px 16px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   width: 100%;
-  transition: background 150ms ease;
+  letter-spacing: -0.1px;
+  transition: background 150ms ease, color 150ms ease;
 
   &:hover {
-    background: #ea6c0a;
+    background: #4449A9;
+    color: white;
   }
 `;
 
 export const CardBody = styled.div`
-  padding: 14px 16px 16px;
+  padding: 14px 16px 18px;
   display: flex;
   flex-direction: column;
   gap: 6px;
+  flex: 1;
 `;
 
 export const CategoryBadge = styled.span`
   display: inline-block;
   font-size: 11px;
-  font-weight: 600;
-  color: #64748b;
-  background: #f1f5f9;
-  border-radius: 4px;
-  padding: 2px 8px;
+  font-weight: 500;
+  color: ${({ theme }) => theme.colors.textLightGray};
   text-transform: capitalize;
-  letter-spacing: 0.2px;
   width: fit-content;
 `;
 
 export const ProductName = styled.p`
   margin: 0;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: ${({ theme }) => theme.colors.textGray};
-  line-height: 1.3;
+  line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -115,7 +115,9 @@ export const ProductName = styled.p`
 
 export const ProductPrice = styled.p`
   margin: 0;
-  font-size: 17px;
+  margin-top: auto;
+  padding-top: 8px;
+  font-size: 15px;
   font-weight: 700;
-  color: ${({ theme }) => theme.colors.otelBlue};
+  color: ${({ theme }) => theme.colors.textGray};
 `;

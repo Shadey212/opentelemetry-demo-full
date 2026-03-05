@@ -5,9 +5,9 @@ import Document, { DocumentContext, Html, Head, Main, NextScript } from 'next/do
 import { ServerStyleSheet } from 'styled-components';
 import {context, propagation} from "@opentelemetry/api";
 
-const { ENV_PLATFORM, WEB_OTEL_SERVICE_NAME, PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT, OTEL_COLLECTOR_HOST, BETTERSTACK_JS_TOKEN, APP_VERSION } = process.env;
+const { ENV_PLATFORM, WEB_OTEL_SERVICE_NAME, PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT, OTEL_COLLECTOR_HOST, BETTERSTACK_JS_TOKEN, APP_VERSION, SENTRY_DSN } = process.env;
 
-export default class MyDocument extends Document<{ envString: string; betterstackJsToken: string; appVersion: string }> {
+export default class MyDocument extends Document<{ envString: string; betterstackJsToken: string; appVersion: string; sentryDsn: string }> {
   static async getInitialProps(ctx: DocumentContext) {
     const sheet = new ServerStyleSheet();
     const originalRenderPage = ctx.renderPage;
@@ -32,6 +32,7 @@ export default class MyDocument extends Document<{ envString: string; betterstac
           NEXT_PUBLIC_OTEL_SERVICE_NAME: '${WEB_OTEL_SERVICE_NAME}',
           NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${otlpTracesEndpoint}',
           IS_SYNTHETIC_REQUEST: '${isSyntheticRequest}',
+          SENTRY_DSN: '${SENTRY_DSN || ''}',
         };`;
       return {
         ...initialProps,
@@ -39,6 +40,7 @@ export default class MyDocument extends Document<{ envString: string; betterstac
         envString,
         betterstackJsToken: BETTERSTACK_JS_TOKEN || '',
         appVersion: APP_VERSION || '2.2.0',
+        sentryDsn: SENTRY_DSN || '',
       };
     } finally {
       sheet.seal();

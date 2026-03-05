@@ -1,14 +1,14 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-FROM docker.io/library/node:24-slim AS builder
+FROM public.ecr.aws/docker/library/node:24-slim AS builder
 
 WORKDIR /app
 
 COPY ./src/frontend/package.json package.json
 COPY ./src/frontend/package-lock.json package-lock.json
 
-RUN npm ci && npm install @sentry/nextjs
+RUN npm ci && npm install @sentry/nextjs web-vitals
 
 COPY ./src/frontend/sentry.client.config.ts sentry.client.config.ts
 COPY ./src/frontend/sentry.server.config.ts sentry.server.config.ts
@@ -28,6 +28,7 @@ COPY ./src/frontend/utils/telemetry/ utils/telemetry/
 COPY ./src/frontend/utils/imageLoader.js utils/imageLoader.js
 COPY ./src/frontend/utils/Request.ts utils/Request.ts
 COPY ./src/frontend/utils/analytics.ts utils/analytics.ts
+COPY ./src/frontend/utils/webVitals.ts utils/webVitals.ts
 
 COPY ./src/frontend/next.config.js next.config.js
 COPY ./src/frontend/tsconfig.json tsconfig.json
@@ -36,7 +37,7 @@ RUN npm run build
 
 # -----------------------------------------------------------------------------
 
-FROM docker.io/library/node:24-slim AS deps
+FROM public.ecr.aws/docker/library/node:24-slim AS deps
 
 WORKDIR /app
 
