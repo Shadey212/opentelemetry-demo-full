@@ -9,7 +9,7 @@ const dsn =
 
 Sentry.init({
   dsn,
-  release: process.env.NEXT_PUBLIC_APP_VERSION,
+  release: (typeof window !== 'undefined' && (window as any).ENV?.APP_VERSION) || process.env.NEXT_PUBLIC_APP_VERSION,
   environment: process.env.NEXT_PUBLIC_PLATFORM || 'production',
 
   // Capture 100% of transactions for performance monitoring / web vitals

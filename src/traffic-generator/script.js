@@ -47,9 +47,50 @@ const VIEWPORTS = [
   { width: 820,  height: 1180 },  // iPad Air
 ];
 
-const LOCALES    = ['en-US', 'en-GB', 'de-DE', 'fr-FR', 'es-ES', 'ja-JP'];
-const TIMEZONES  = ['America/New_York', 'America/Los_Angeles', 'America/Chicago', 'Europe/London', 'Europe/Berlin', 'Asia/Tokyo'];
+const LOCALES    = ['en-US', 'en-GB', 'de-DE', 'fr-FR', 'es-ES', 'ja-JP', 'pt-BR', 'ko-KR', 'zh-CN', 'it-IT', 'nl-NL', 'sv-SE'];
+const TIMEZONES  = ['America/New_York', 'America/Los_Angeles', 'America/Chicago', 'America/Denver', 'America/Sao_Paulo', 'Europe/London', 'Europe/Berlin', 'Europe/Paris', 'Europe/Rome', 'Europe/Amsterdam', 'Europe/Stockholm', 'Asia/Tokyo', 'Asia/Seoul', 'Asia/Shanghai', 'Asia/Kolkata', 'Australia/Sydney', 'Pacific/Auckland'];
 const CURRENCIES = ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD'];
+
+const GEOLOCATIONS = [
+  { latitude: 40.7128,  longitude: -74.0060  }, // New York
+  { latitude: 34.0522,  longitude: -118.2437 }, // Los Angeles
+  { latitude: 41.8781,  longitude: -87.6298  }, // Chicago
+  { latitude: 51.5074,  longitude: -0.1278   }, // London
+  { latitude: 48.8566,  longitude: 2.3522    }, // Paris
+  { latitude: 52.5200,  longitude: 13.4050   }, // Berlin
+  { latitude: 35.6762,  longitude: 139.6503  }, // Tokyo
+  { latitude: -23.5505, longitude: -46.6333  }, // São Paulo
+  { latitude: 37.5665,  longitude: 126.9780  }, // Seoul
+  { latitude: -33.8688, longitude: 151.2093  }, // Sydney
+  { latitude: 19.0760,  longitude: 72.8777   }, // Mumbai
+  { latitude: 55.7558,  longitude: 37.6173   }, // Moscow
+  { latitude: 49.2827,  longitude: -123.1207 }, // Vancouver
+  { latitude: 45.4642,  longitude: 9.1900    }, // Milan
+  { latitude: 59.3293,  longitude: 18.0686   }, // Stockholm
+];
+
+const UTM_SOURCES   = ['google', 'facebook', 'twitter', 'linkedin', 'newsletter', 'reddit', 'youtube', 'bing', 'direct', 'instagram', 'tiktok'];
+const UTM_MEDIUMS   = ['cpc', 'organic', 'social', 'email', 'referral', 'display', 'affiliate'];
+const UTM_CAMPAIGNS = ['spring_sale', 'new_arrivals', 'clearance', 'brand_awareness', 'retargeting', 'holiday_promo', 'launch_2024', 'astronomy_week', 'telescope_deals', 'back_to_school'];
+const UTM_TERMS     = ['telescope', 'astronomy gear', 'stargazing', 'astrophotography', 'binoculars', 'star map', 'observatory'];
+const UTM_CONTENTS  = ['hero_banner', 'sidebar_ad', 'email_header', 'carousel_1', 'carousel_2', 'footer_cta', 'popup'];
+
+const REFERRERS = [
+  'https://www.google.com/',
+  'https://www.google.co.uk/',
+  'https://www.bing.com/',
+  'https://www.facebook.com/',
+  'https://t.co/abc123',
+  'https://www.reddit.com/r/telescopes/',
+  'https://www.youtube.com/',
+  'https://www.instagram.com/',
+  'https://news.ycombinator.com/',
+  'https://betterstack.com/blog',
+  'https://betterstack.com/docs',
+  '',  // direct traffic
+  '',
+  '',
+];
 
 const FAKE_USERS = [
   { email: 'alice@example.com',       street: '742 Evergreen Terrace',  city: 'Springfield',   state: 'IL', country: 'United States', zip: '62701', cc: '4432-8015-6152-0454', cvv: '672', month: '3',  year: '2028' },
@@ -101,7 +142,7 @@ async function clickRandomProduct(page) {
 // ──────────────────────────────────────────────────────────────
 async function journeyWindowShop(page, label) {
   console.log(`[${label}] window-shop: start`);
-  await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 20000 });
+  await page.goto(buildLandingUrl(), { waitUntil: 'domcontentloaded', timeout: 20000 });
   await page.waitForSelector('[data-cy="product-card"]', { timeout: 15000 });
   await think();
   await humanScroll(page, randInt(3, 6));
@@ -124,7 +165,7 @@ async function journeyWindowShop(page, label) {
 // ──────────────────────────────────────────────────────────────
 async function journeyBrowseAndCart(page, label) {
   console.log(`[${label}] browse-cart: start`);
-  await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 20000 });
+  await page.goto(buildLandingUrl(), { waitUntil: 'domcontentloaded', timeout: 20000 });
   await page.waitForSelector('[data-cy="product-card"]', { timeout: 15000 });
   await think();
 
@@ -163,7 +204,7 @@ async function journeyBrowseAndCart(page, label) {
 // ──────────────────────────────────────────────────────────────
 async function journeyFullCheckout(page, label) {
   console.log(`[${label}] checkout: start`);
-  await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 20000 });
+  await page.goto(buildLandingUrl(), { waitUntil: 'domcontentloaded', timeout: 20000 });
   await page.waitForSelector('[data-cy="product-card"]', { timeout: 15000 });
   await think();
 
@@ -220,7 +261,7 @@ async function journeyFullCheckout(page, label) {
 // ──────────────────────────────────────────────────────────────
 async function journeyMultiProduct(page, label) {
   console.log(`[${label}] multi-product: start`);
-  await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 20000 });
+  await page.goto(buildLandingUrl(), { waitUntil: 'domcontentloaded', timeout: 20000 });
   await page.waitForSelector('[data-cy="product-card"]', { timeout: 15000 });
   await think();
   await humanScroll(page, 2);
@@ -264,7 +305,7 @@ async function journeyMultiProduct(page, label) {
 // ──────────────────────────────────────────────────────────────
 async function journeyChangeCurrency(page, label) {
   console.log(`[${label}] currency: start`);
-  await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 20000 });
+  await page.goto(buildLandingUrl(), { waitUntil: 'domcontentloaded', timeout: 20000 });
   await page.waitForSelector('[data-cy="product-card"]', { timeout: 15000 });
   await think();
 
@@ -292,7 +333,7 @@ async function journeyChangeCurrency(page, label) {
 // ──────────────────────────────────────────────────────────────
 async function journeyDeepRead(page, label) {
   console.log(`[${label}] deep-read: start`);
-  await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 20000 });
+  await page.goto(buildLandingUrl(), { waitUntil: 'domcontentloaded', timeout: 20000 });
   await page.waitForSelector('[data-cy="product-card"]', { timeout: 15000 });
   await think();
 
@@ -333,17 +374,38 @@ function pickJourney() {
 // ──────────────────────────────────────────────────────────────
 // Worker — one per concurrent virtual user
 // ──────────────────────────────────────────────────────────────
+/** Build a landing URL with random UTM params (60% of sessions get UTMs). */
+function buildLandingUrl() {
+  let url = BASE_URL;
+  if (Math.random() < 0.6) {
+    const params = new URLSearchParams();
+    params.set('utm_source', pick(UTM_SOURCES));
+    params.set('utm_medium', pick(UTM_MEDIUMS));
+    params.set('utm_campaign', pick(UTM_CAMPAIGNS));
+    if (Math.random() < 0.5) params.set('utm_term', pick(UTM_TERMS));
+    if (Math.random() < 0.4) params.set('utm_content', pick(UTM_CONTENTS));
+    url += '?' + params.toString();
+  }
+  return url;
+}
+
 async function runWorker(browser, workerId) {
   const label = `worker-${workerId}`;
   let sessionCount = 0;
 
   while (true) {
     sessionCount++;
+    const geo = pick(GEOLOCATIONS);
     const context = await browser.newContext({
       userAgent:  pick(USER_AGENTS),
       viewport:   pick(VIEWPORTS),
       locale:     pick(LOCALES),
       timezoneId: pick(TIMEZONES),
+      geolocation: geo,
+      permissions: ['geolocation'],
+      extraHTTPHeaders: {
+        'Referer': pick(REFERRERS),
+      },
     });
 
     const page = await context.newPage();
