@@ -66,19 +66,29 @@ const CartProvider = ({ children }: IProps) => {
   );
 
   const emptyCart = useCallback(() => {
-    Analytics.cartEmptied();
+    Analytics.cartEmptied(cart.items.length);
     return emptyCartMutation.mutateAsync();
-  }, [emptyCartMutation]);
+  }, [emptyCartMutation, cart.items.length]);
 
   const placeOrder = useCallback(
     (order: PlaceOrderRequest) => {
-      Analytics.checkoutStarted(cart.items.length);
-      return placeOrderMutation.mutateAsync({ ...order, currencyCode: selectedCurrency }).then(result => {
-        if (result?.orderId) {
-          Analytics.orderPlaced(result.orderId);
+      const itemCount = cart.items.length;
+      Analytics.checkoutStarted(itemCount, undefined, selectedCurrency);
+      return placeOrderMutation.mutateAsync({ ...order, currencyCode: selectedCurrency }).then(
+        result => {
+          if (result?.orderId) {
+            Analytics.orderPlaced(result.orderId, itemCount, undefined, selectedCurrency);
+          }
+          return result;
+        },
+        error => {
+          Analytics.orderFailed(
+            error?.message || 'Unknown error',
+            itemCount,
+          );
+          throw error;
         }
-        return result;
-      });
+      );
     },
     [placeOrderMutation, selectedCurrency, cart.items.length]
   );

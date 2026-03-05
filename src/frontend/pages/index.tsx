@@ -25,6 +25,12 @@ const Home: NextPage = () => {
     Analytics.pageViewed('Home');
   }, []);
 
+  useEffect(() => {
+    if (productList.length > 0) {
+      Analytics.productListViewed(productList.length, selectedCurrency);
+    }
+  }, [productList.length, selectedCurrency]);
+
   return (
     <Layout>
       <Head>

@@ -11,6 +11,7 @@ import Theme from '../styles/Theme';
 import FrontendTracer from '../utils/telemetry/FrontendTracer';
 import SessionGateway from '../gateways/Session.gateway';
 import Analytics from '../utils/analytics';
+import { reportWebVitals } from '../utils/webVitals';
 import { OpenFeatureProvider, OpenFeature } from '@openfeature/react-sdk';
 import { FlagdWebProvider } from '@openfeature/flagd-web-provider';
 
@@ -27,6 +28,7 @@ declare global {
 
 if (typeof window !== 'undefined') {
   FrontendTracer();
+  reportWebVitals();
   if (window.location) {
     const session = SessionGateway.getSession();
     Analytics.setUser(session.userId);

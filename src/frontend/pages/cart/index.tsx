@@ -21,7 +21,7 @@ const Cart: NextPage = () => {
   useEffect(() => {
     Analytics.cartViewed(items.length);
     Analytics.pageViewed('Cart');
-  }, [items.length]);
+  }, []);
 
   return (
     <AdProvider

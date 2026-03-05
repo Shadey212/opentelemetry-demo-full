@@ -5,7 +5,8 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
+import Analytics from '../../../../utils/analytics';
 import Ad from '../../../../components/Ad';
 import Button from '../../../../components/Button';
 import Layout from '../../../../components/Layout';
@@ -38,6 +39,14 @@ const Checkout: NextPage = () => {
       currencyCode: shippingCost.currencyCode || 'USD',
     };
   }, [items, shippingCost]);
+
+  useEffect(() => {
+    if (orderId) {
+      const totalNum = (orderTotal.units || 0) + (orderTotal.nanos || 0) / 1e9;
+      Analytics.pageViewed('Order Confirmation');
+      Analytics.orderPlaced(orderId, items.length, totalNum, orderTotal.currencyCode);
+    }
+  }, [orderId, items.length, orderTotal]);
 
   return (
     <AdProvider

@@ -1,11 +1,12 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import { useCurrency } from '../../providers/Currency.provider';
 import * as S from './CurrencySwitcher.styled';
 import { CypressFields } from '../../utils/enums/CypressFields';
+import Analytics from '../../utils/analytics';
 
 const CurrencySwitcher = () => {
   const { currencyCodeList, setSelectedCurrency, selectedCurrency } = useCurrency();
@@ -18,7 +19,10 @@ const CurrencySwitcher = () => {
         <S.SelectedConcurrency>{currencySymbol}</S.SelectedConcurrency>
         <S.Select
           name="currency_code"
-          onChange={(event: { target: { value: string; }; }) => setSelectedCurrency(event.target.value)}
+          onChange={(event: { target: { value: string; }; }) => {
+            Analytics.currencyChanged(selectedCurrency, event.target.value);
+            setSelectedCurrency(event.target.value);
+          }}
           value={selectedCurrency}
           data-cy={CypressFields.CurrencySwitcher}
         >

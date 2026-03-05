@@ -15,9 +15,9 @@ const CartIcon = () => {
   } = useCart();
 
   const handleOpen = useCallback(() => {
-    Analytics.cartOpened();
+    Analytics.cartOpened(items.length);
     setIsOpen(true);
-  }, []);
+  }, [items.length]);
 
   return (
     <>
