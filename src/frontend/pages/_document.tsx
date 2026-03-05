@@ -33,7 +33,7 @@ export default class MyDocument extends Document<{ envString: string; betterstac
           NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${otlpTracesEndpoint}',
           IS_SYNTHETIC_REQUEST: '${isSyntheticRequest}',
           SENTRY_DSN: '${SENTRY_DSN || ''}',
-          APP_VERSION: '${APP_VERSION || '2.3.2'}',
+          APP_VERSION: '${APP_VERSION || '2.3.3'}',
         };`;
       return {
         ...initialProps,

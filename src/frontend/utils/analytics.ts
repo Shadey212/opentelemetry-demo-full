@@ -114,14 +114,46 @@ function trackEvent(
 ) {
   const browser = getBrowserContext();
   const page = getPageContext();
+
+  // Surface memory as tags for easy filtering
+  const memTags: Record<string, string> = {};
+  if (browser.js_heap_used) {
+    const usedMB = Math.round((browser.js_heap_used as number) / 1024 / 1024);
+    const totalMB = Math.round((browser.js_heap_total as number) / 1024 / 1024);
+    const limitMB = Math.round((browser.js_heap_limit as number) / 1024 / 1024);
+    memTags.heap_used_mb = String(usedMB);
+    memTags.heap_total_mb = String(totalMB);
+    memTags.heap_limit_mb = String(limitMB);
+  }
+
   Sentry.captureMessage(message, {
     level,
-    tags,
+    tags: { ...tags, ...memTags },
     contexts: {
       browser_info: browser,
       page_info: page,
     },
-    extra: { ...extra, ...page },
+    extra: {
+      ...extra,
+      ...page,
+      // Flatten key browser fields into extra so they're visible in Additional Data
+      user_agent: browser.user_agent,
+      language: browser.language,
+      timezone: browser.timezone,
+      screen: `${browser.screen_width}x${browser.screen_height}`,
+      viewport: `${browser.viewport_width}x${browser.viewport_height}`,
+      device_pixel_ratio: browser.device_pixel_ratio,
+      connection_type: browser.connection_type,
+      connection_downlink: browser.connection_downlink,
+      hardware_concurrency: browser.hardware_concurrency,
+      device_memory: browser.device_memory,
+      js_heap_used_bytes: browser.js_heap_used,
+      js_heap_total_bytes: browser.js_heap_total,
+      js_heap_limit_bytes: browser.js_heap_limit,
+      online: browser.online,
+      platform: browser.platform,
+      mobile: browser.mobile,
+    },
   });
 }
 
@@ -357,15 +389,43 @@ const Analytics = {
   // --- Memory ---
 
   async reportMemory() {
-    const mem = await measureMemory();
-    if (mem) {
+    if (typeof window === 'undefined') return;
+    const perf = performance as any;
+
+    // Always report performance.memory if available (Chrome)
+    if (perf.memory) {
+      const usedMB = Math.round(perf.memory.usedJSHeapSize / 1024 / 1024);
+      const totalMB = Math.round(perf.memory.totalJSHeapSize / 1024 / 1024);
+      const limitMB = Math.round(perf.memory.jsHeapSizeLimit / 1024 / 1024);
       Sentry.addBreadcrumb({
         category: 'performance',
-        message: `Memory: ${Math.round((mem.memory_bytes as number) / 1024 / 1024)}MB`,
-        data: mem,
+        message: `JS Heap: ${usedMB}MB used / ${totalMB}MB total / ${limitMB}MB limit`,
+        data: {
+          usedJSHeapSize: perf.memory.usedJSHeapSize,
+          totalJSHeapSize: perf.memory.totalJSHeapSize,
+          jsHeapSizeLimit: perf.memory.jsHeapSizeLimit,
+        },
         level: 'info',
       });
-      trackEvent('Memory measurement', { event: 'memory_measurement' }, mem);
+      trackEvent('JS Heap Memory', {
+        event: 'memory_measurement',
+        heap_used_mb: String(usedMB),
+        heap_total_mb: String(totalMB),
+        heap_limit_mb: String(limitMB),
+      }, {
+        usedJSHeapSize: perf.memory.usedJSHeapSize,
+        totalJSHeapSize: perf.memory.totalJSHeapSize,
+        jsHeapSizeLimit: perf.memory.jsHeapSizeLimit,
+        heap_used_mb: usedMB,
+        heap_total_mb: totalMB,
+        heap_limit_mb: limitMB,
+      });
+    }
+
+    // measureUserAgentSpecificMemory (requires cross-origin isolation)
+    const mem = await measureMemory();
+    if (mem) {
+      trackEvent('Detailed Memory', { event: 'detailed_memory' }, mem);
     }
   },
 

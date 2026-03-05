@@ -26,7 +26,7 @@ const {
   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = '',
   OTEL_SERVICE_NAME = 'frontend',
   PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = '',
-  APP_VERSION = '2.3.2',
+  APP_VERSION = '2.3.3',
 } = process.env;
 
 const nextConfig = {
