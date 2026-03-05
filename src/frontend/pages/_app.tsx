@@ -33,6 +33,9 @@ if (typeof window !== 'undefined') {
     const session = SessionGateway.getSession();
     Analytics.setUser(session.userId);
 
+    // Report memory after page is idle (Chrome 89+)
+    setTimeout(() => Analytics.reportMemory(), 10000);
+
     // Set context prior to provider init to avoid multiple http calls
     OpenFeature.setContext({ targetingKey: session.userId, ...session }).then(() => {
       /**

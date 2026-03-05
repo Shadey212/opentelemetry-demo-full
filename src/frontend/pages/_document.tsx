@@ -39,7 +39,7 @@ export default class MyDocument extends Document<{ envString: string; betterstac
         styles: [initialProps.styles, sheet.getStyleElement()],
         envString,
         betterstackJsToken: BETTERSTACK_JS_TOKEN || '',
-        appVersion: APP_VERSION || '2.3.0',
+        appVersion: APP_VERSION || '2.3.1',
         sentryDsn: SENTRY_DSN || '',
       };
     } finally {
